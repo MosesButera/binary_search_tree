@@ -17,11 +17,17 @@ class Tree
     mid = start + ((ending - start) / 2)
     node = Node.new(@list[mid])
 
-    puts "start: #{start}, ending: #{ending}, mid_index: #{mid}"
     node.left_child = build_tree(start, mid - 1)
-    puts "start: #{start}, ending: #{ending}, mid: #{mid}"
     node.right_child = build_tree(mid + 1, ending)
 
     node
+  end
+
+  def pretty_print(node = @root, prefix = '', is_left: true)
+    return if node.nil?
+
+    pretty_print(node.right_child, "#{prefix}#{is_left ? '│   ' : '    '}", is_left: false)
+    puts "#{prefix}#{is_left ? '└── ' : '┌── '}#{node.data}"
+    pretty_print(node.left_child, "#{prefix}#{is_left ? '    ' : '│   '}", is_left: true)
   end
 end
