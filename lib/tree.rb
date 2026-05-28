@@ -3,6 +3,8 @@
 require_relative 'node'
 
 class Tree
+  attr_accessor :root, :list
+
   def initialize(list)
     @list = list.uniq.sort
     @root = build_tree(0, @list.length - 1)
@@ -33,5 +35,19 @@ class Tree
 
   def include?(value)
     @list.include?(value)
+  end
+
+  def insert(root, value)
+    nil if @list.include?(value)
+    return root = Node.new(value) if root.nil?
+
+    puts "current node: #{root.data}"
+    if value < root.data
+      root.left_child = insert(root.left_child, value)
+    else
+      root.right_child = insert(root.right_child, value)
+    end
+
+    root
   end
 end
