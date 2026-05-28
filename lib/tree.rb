@@ -30,4 +30,8 @@ class Tree
     puts "#{prefix}#{is_left ? '└── ' : '┌── '}#{node.data}"
     pretty_print(node.left_child, "#{prefix}#{is_left ? '    ' : '│   '}", is_left: true)
   end
+
+  def include?(value)
+    @list.include?(value)
+  end
 end
