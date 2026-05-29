@@ -50,4 +50,32 @@ class Tree
 
     root
   end
+
+  def get_successor(current_node)
+    current_node = current_node.right_child
+
+    current_node = current_node.left_child while !current_node.nil? && !current_node.left_child.nil?
+    current_node
+  end
+
+  def delete_node(root, value)
+    return nil if root.nil?
+    return nil unless @list.include?(value)
+
+    if value < root.data
+      root.left_child = delete_node(root.left_child, value)
+    elsif value > root.data
+      root.right_child = delete_node(root.right_child, value)
+    elsif root.left_child.nil?
+      return root.right_child
+    elsif root.right_child.nil?
+      return root.left_child
+    else
+      successor = get_successor(root)
+      root.data = successor.data
+      root.right_child = delete_node(root.right_child, successor.data)
+    end
+
+    root
+  end
 end
