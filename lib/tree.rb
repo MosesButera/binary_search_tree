@@ -78,4 +78,22 @@ class Tree
 
     root
   end
+
+  def level_order
+    return if @root.nil?
+    return to_enum(:level_order) unless block_given?
+
+    queue = []
+    queue << @root
+
+    until queue.empty?
+      current = queue.shift
+      yield(current.data)
+
+      queue.push(current.left_child) unless current.left_child.nil?
+      queue.push(current.right_child) unless current.right_child.nil?
+    end
+
+    self
+  end
 end
