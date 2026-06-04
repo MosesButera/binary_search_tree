@@ -126,4 +126,15 @@ class Tree
     # Forward the block down to the next recursive step
     run_level_order(&block)
   end
+
+  def in_order(node = @root, &block)
+    return to_enum(:in_order) unless block_given?
+    return self if node.nil?
+
+    in_order(node.left_child, &block)
+    yield(node.data)
+    in_order(node.right_child, &block)
+
+    self
+  end
 end
