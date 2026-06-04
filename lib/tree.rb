@@ -148,4 +148,15 @@ class Tree
 
     self
   end
+
+  def post_order(node = @root, &block)
+    return to_enum(:pre_order) unless block_given?
+    return self if node.nil?
+
+    post_order(node.left_child, &block)
+    post_order(node.right_child, &block)
+    yield(node.data)
+
+    self
+  end
 end
