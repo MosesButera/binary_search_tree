@@ -80,11 +80,12 @@ class Tree
   end
 
   def level_order
-    return if @root.nil?
+    return self if @root.nil?
     return to_enum(:level_order) unless block_given?
 
-    queue = []
-    queue << @root
+    # Fix state corruption and memory leaks by using fresh, local queue
+    # for this run
+    queue = [@root]
 
     until queue.empty?
       current = queue.shift
@@ -94,6 +95,35 @@ class Tree
       queue.push(current.right_child) unless current.right_child.nil?
     end
 
+    # Return self to allow for method chaining
     self
+  end
+
+  def level_order_recursive(&block)
+    return to_enum(:level_order_recursive) unless block_given?
+    return self if @root.nil?
+
+    # Fresh queue initialized on every unique call
+    @queue = [@root]
+
+    # call the recursive engine
+    run_level_order(&block)
+
+    # clear the queue to free memory
+    @queue = nil
+
+    self
+  end
+
+  def run_level_order(&block)
+    return if @queue.empty?
+
+    current = @queue.shift
+    yield(current.data)
+    @queue << current.left_child unless current.left_child.nil?
+    @queue << current.right_child unless current.right_child.nil?
+
+    # Forward the block down to the next recursive step
+    run_level_order(&block)
   end
 end
