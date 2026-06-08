@@ -5,12 +5,15 @@ require_relative 'node'
 class Tree
   attr_accessor :root, :list
 
-  def initialize(list)
-    @list = list.uniq.sort
-    @root = build_tree(0, @list.length - 1)
+  def initialize(list, balanced: true)
+    if balanced
+      @list = list.uniq.sort
+      @root = build_tree(0, @list.length - 1)
+    else
+      @list = list
+      @root = unbalanced_build(list)
+    end
   end
-
-  # private
 
   def build_tree(start, ending)
     # Base case:
@@ -38,14 +41,25 @@ class Tree
   end
 
   def insert(root, value)
-    nil if @list.include?(value)
+    return if @list.include?(value)
     return root = Node.new(value) if root.nil?
 
-    puts "current node: #{root.data}"
     if value < root.data
       root.left_child = insert(root.left_child, value)
     else
       root.right_child = insert(root.right_child, value)
+    end
+
+    root
+  end
+
+  def insert_unbalanced(root, value)
+    return root = Node.new(value) if root.nil?
+
+    if value < root.data
+      root.left_child = insert_unbalanced(root.left_child, value)
+    else
+      root.right_child = insert_unbalanced(root.right_child, value)
     end
 
     root
@@ -150,7 +164,7 @@ class Tree
   end
 
   def post_order(node = @root, &block)
-    return to_enum(:pre_order) unless block_given?
+    return to_enum(:post_order) unless block_given?
     return self if node.nil?
 
     post_order(node.left_child, &block)
@@ -158,5 +172,47 @@ class Tree
     yield(node.data)
 
     self
+  end
+
+  def height(value)
+    return nil unless @list.include?(value)
+
+    target_node = find_node(@root, value)
+
+    calculate_height(target_node)
+  end
+
+  def find_node(node, value)
+    return nil if node.nil?
+    return node if value == node.data
+
+    if value < node.data
+      find_node(node.left_child, value)
+    else
+      find_node(node.right_child, value)
+    end
+  end
+
+  def calculate_height(node)
+    # Base case
+    return -1 if node.nil?
+
+    left_height = calculate_height(node.left_child)
+    right_height = calculate_height(node.right_child)
+
+    [left_height, right_height].max + 1
+  end
+
+  def unbalanced_build(array)
+    return nil if array.nil? || array.empty?
+
+    root = Node.new(array.first)
+    remaining_array = array[1..]
+
+    remaining_array.each do |value|
+      insert_unbalanced(root, value)
+    end
+
+    root
   end
 end
