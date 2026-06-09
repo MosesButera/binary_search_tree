@@ -215,4 +215,16 @@ class Tree
 
     root
   end
+
+  def depth(value, node = @root)
+    return nil unless @list.include?(value)
+    return -1 if node.nil?
+    return 0 if node.data == value
+
+    if value < node.data
+      depth(value, node.left_child) + 1
+    else
+      depth(value, node.right_child) + 1
+    end
+  end
 end
