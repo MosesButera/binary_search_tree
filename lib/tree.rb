@@ -227,4 +227,27 @@ class Tree
       depth(value, node.right_child) + 1
     end
   end
+
+  def is_balanced?
+    return true if balanced?(@root).is_a?(Integer)
+
+    false
+  end
+
+  def balanced?(node = @root)
+    return -1 if node.nil?
+
+    left_height = balanced?(node.left_child)
+    return false unless left_height.is_a?(Integer)
+
+    right_height = balanced?(node.right_child)
+    return false unless right_height.is_a?(Integer)
+
+    difference = left_height - right_height
+    if difference.abs > 1
+      false
+    else
+      [left_height, right_height].max + 1
+    end
+  end
 end
