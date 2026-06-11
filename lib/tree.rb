@@ -9,6 +9,7 @@ class Tree
     if balanced
       @list = list.uniq.sort
       @root = build_tree(0, @list.length - 1)
+      @queue = []
     else
       @list = list
       @root = unbalanced_build(list)
@@ -251,7 +252,7 @@ class Tree
     end
   end
 
-  def rebalanced
+  def rebalance
     unless balanced?(@root).is_a?(Integer)
       list = []
       in_order { |data| list << data }
@@ -260,5 +261,46 @@ class Tree
     end
 
     self
+  end
+
+  def driver_script
+    puts "\nis tree balanced?: #{is_balanced?}"
+    pretty_print
+
+    # printing out all elements
+    puts 'printing all elements'
+    pre_order { |data| print "#{data}" }
+    puts "\n\n"
+    post_order { |data| print "#{data} " }
+    puts "\n\n"
+    in_order { |data| print "#{data} " }
+    puts "\n\n"
+
+    root = self.root
+    unbalancing_array = Array.new(10) { rand(100..200) }
+
+    puts "inserting array: #{unbalancing_array} into tree"
+    # unbalancing tree
+    unbalancing_array.each do |value|
+      insert(root, value)
+    end
+
+    puts "\nis tree balanced?: #{is_balanced?}"
+
+    # balancing tree
+    rebalance
+    puts "\nis tree balanced?: #{is_balanced?}"
+    pretty_print
+
+    puts "\n\n"
+    puts 'printing all elements'
+
+    level_order_recursive { |data| print "#{data} " }
+    puts "\n\n"
+    pre_order { |data| print "#{data} " }
+    puts "\n\n"
+    post_order { |data| print "#{data} " }
+    puts "\n\n"
+    in_order { |data| print "#{data} " }
   end
 end
