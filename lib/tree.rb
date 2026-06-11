@@ -250,4 +250,15 @@ class Tree
       [left_height, right_height].max + 1
     end
   end
+
+  def rebalanced
+    unless balanced?(@root).is_a?(Integer)
+      list = []
+      in_order { |data| list << data }
+      @list = list
+      @root = build_tree(0, @list.length - 1)
+    end
+
+    self
+  end
 end
